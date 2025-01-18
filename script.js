@@ -13,7 +13,7 @@ function Gameboard() {
     const getBoard = () => board;
 
     const tickBoard = (row, column, player) => {
-        if (!board[row][column] === 0) return;
+        if (board[row][column].getValue() !== 0) return;
         board[row][column].tick(player);
     }
 
@@ -70,12 +70,82 @@ function gameController(
         console.log(`${getActivePlayer().name}'s turn.`);
     };
 
+    // Inline Win Check
+    const checkWin = () => {
+        const b = board.getBoard();
+        const token = getActivePlayer().token;
+
+        // Check rows and columns
+        for (let i = 0; i < 3; i++) {
+            if (
+                b[i][0].getValue() === token &&
+                b[i][1].getValue() === token &&
+                b[i][2].getValue() === token
+            ) {
+                return true; // Row win
+            }
+
+            if (
+                b[0][i].getValue() === token &&
+                b[1][i].getValue() === token &&
+                b[2][i].getValue() === token
+            ) {
+                return true; // Column win
+            }
+        }
+
+        // Check diagonals
+        if (
+            b[0][0].getValue() === token &&
+            b[1][1].getValue() === token &&
+            b[2][2].getValue() === token
+        ) {
+            return true; // Left-to-right diagonal
+        }
+
+        if (
+            b[0][2].getValue() === token &&
+            b[1][1].getValue() === token &&
+            b[2][0].getValue() === token
+        ) {
+            return true; // Right-to-left diagonal
+        }
+
+        return false;
+    };
+
+    // Inline Draw Check
+    const checkDraw = () => {
+        const b = board.getBoard();
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (b[i][j].getValue() === 0) {
+                    return false; // Still empty cells
+                }
+            }
+        }
+        return true; // Board is full
+    };
+
     const playRound = (row, column) => {
         console.log(`${getActivePlayer().name} ticking row ${row}, column ${column}...`);
         board.tickBoard(row, column, getActivePlayer().token);
 
         /*  This is where we would check for a winner and handle that logic,
         such as a win message. */
+        // Check for a win
+        if (checkWin()) {
+            board.printBoard();
+            console.log(`${getActivePlayer().name} wins!`);
+            return; // Stop the game if there's a winner
+        }
+
+        // Check for a draw
+        if (checkDraw()) {
+            board.printBoard();
+            console.log("It's a draw!");
+            return; // Stop the game if it's a draw
+        }
 
         switchPlayerTurn();
         printNewRound();
@@ -94,3 +164,6 @@ const game = gameController();
 
 game.playRound(0, 0);
 game.playRound(1, 1);
+game.playRound(0, 1);
+game.playRound(1, 0);
+game.playRound(0, 2);
