@@ -192,7 +192,7 @@ function ScreenController() {
     
         if(!selectedColumn || !selectedRow) return;
     
-        game.playRound(selectedColumn);
+        game.playRound(selectedRow, selectedColumn);
         updateScreen();
     }
 
