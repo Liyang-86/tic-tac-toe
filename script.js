@@ -131,8 +131,6 @@ function GameController(
         console.log(`${getActivePlayer().name} ticking row ${row}, column ${column}...`);
         board.tickBoard(row, column, getActivePlayer().token);
 
-        /*  This is where we would check for a winner and handle that logic,
-        such as a win message. */
         // Check for a win
         if (checkWin()) {
             board.printBoard();
